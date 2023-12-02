@@ -1,5 +1,8 @@
 ﻿using GameNetcodeStuff;
 using HarmonyLib;
+using System.IO;
+using System.Reflection;
+using System.Security.Cryptography;
 using UnityEngine;
 
 namespace LCThirdPerson.Patches
@@ -9,11 +12,27 @@ namespace LCThirdPerson.Patches
     {
         internal static Sprite CreateCrosshairSprite()
         {
-            string filename = @"BepinEx\plugins\LCThirdPerson\crosshair.png";
-            var crosshairData = System.IO.File.ReadAllBytes(filename);
+            string filename = @"LCThirdPerson.crosshair.png";
+            var assembly = Assembly.GetExecutingAssembly();
+            var crosshairData = assembly.GetManifestResourceStream(filename);
+
+            foreach (var name in assembly.GetManifestResourceNames()) {
+                ThirdPersonPlugin.Log.LogInfo(name);
+
+            }
+
+
+            ThirdPersonPlugin.Log.LogInfo(assembly);
+            ThirdPersonPlugin.Log.LogInfo(crosshairData);
 
             var tex = new Texture2D(2, 2);
-            tex.LoadImage(crosshairData);
+
+            using (var stream = new MemoryStream())
+            {
+                crosshairData.CopyTo(stream);
+                tex.LoadImage(stream.ToArray());
+
+            }
             tex.filterMode = FilterMode.Point;
 
             return Sprite.Create(
