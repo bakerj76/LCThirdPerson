@@ -1,3 +1,5 @@
+[preview](https://github.com/bakerj76/LCThirdPerson/blob/main/preview.png?raw=true)
+
 # LCThirdPerson
 Adds third person to Lethal Company.
 
