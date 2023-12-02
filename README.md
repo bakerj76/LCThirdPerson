@@ -1,4 +1,4 @@
-[preview](/preview.png)
+![preview](/preview.png)
 
 # LCThirdPerson
 Adds third person to Lethal Company.
@@ -13,7 +13,7 @@ Toggle with "V"
 
 ## Installation
 1. Set up BepInEx
-2. Place `LCThirdPerson.dll` and `crosshair.png` in `BepInEx/plugins/LCThirdPerson`
+2. Place `LCThirdPerson.dll` in `BepInEx/plugins`
 
 ### Edit the config
 1. Run the game once to create the config file
