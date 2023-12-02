@@ -15,16 +15,6 @@ namespace LCThirdPerson.Patches
             string filename = @"LCThirdPerson.crosshair.png";
             var assembly = Assembly.GetExecutingAssembly();
             var crosshairData = assembly.GetManifestResourceStream(filename);
-
-            foreach (var name in assembly.GetManifestResourceNames()) {
-                ThirdPersonPlugin.Log.LogInfo(name);
-
-            }
-
-
-            ThirdPersonPlugin.Log.LogInfo(assembly);
-            ThirdPersonPlugin.Log.LogInfo(crosshairData);
-
             var tex = new Texture2D(2, 2);
 
             using (var stream = new MemoryStream())
