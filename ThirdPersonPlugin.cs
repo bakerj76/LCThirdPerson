@@ -22,6 +22,7 @@ namespace LCThirdPerson
 
         public ConfigEntry<KeyboardShortcut> Enable { get; internal set; }
         public ConfigEntry<bool> ShowCursor { get; set; }
+        public ConfigEntry<bool> StartEnabled { get; set; }
         public ConfigEntry<Vector3> Offset { get; set; }
 
         private bool tpEnabled;
@@ -62,7 +63,10 @@ namespace LCThirdPerson
         {
             Enable = Config.Bind("Keybinds", "Toggle", new KeyboardShortcut(KeyCode.V));
             ShowCursor = Config.Bind("Options", "ShowCursor", true);
+            StartEnabled = Config.Bind("Options", "StartEnabled", true);
             Offset = Config.Bind("Options", "CameraOffset", new Vector3(1f, 0f, -2f));
+
+            Enabled = StartEnabled.Value;
         }
 
         internal void SetCrosshairSprite()

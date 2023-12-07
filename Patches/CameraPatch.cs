@@ -54,7 +54,7 @@ namespace LCThirdPerson.Patches
             playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
 
             // Show the arms
-            Instance.thisPlayerModelArms.enabled = false;
+            Instance.thisPlayerModelArms.enabled = true;
 
             // Reset the grab distance
             Instance.grabDistance = 5f;
@@ -109,6 +109,12 @@ namespace LCThirdPerson.Patches
             Instance.gameplayCamera.transform.rotation = ThirdPersonPlugin.OriginalTransform.transform.rotation;
             Instance.gameplayCamera.transform.position = ThirdPersonPlugin.OriginalTransform.transform.position;
 
+            // Don't check for toggle key if in terminal menu or typing in chat
+            if (Instance.inTerminalMenu || Instance.isTypingChat)
+            {
+                return;
+            }
+
             ThirdPersonPlugin.Instance.CheckEnable();
         }
 
@@ -151,6 +157,12 @@ namespace LCThirdPerson.Patches
             // Set the camera offset
             gameplayCamera.transform.position = originalTransform.transform.position + offset;
 
+            // Don't fix interact ray if on a ladder
+            if (Instance.isClimbingLadder)
+            {
+                return;
+            }
+
             // Fix the interact ray 
             var methodInfo = typeof(PlayerControllerB).GetMethod(
                 "SetHoverTipAndCurrentInteractTrigger",
@@ -183,6 +195,23 @@ namespace LCThirdPerson.Patches
 
             Instance.gameplayCamera.transform.position = ThirdPersonPlugin.OriginalTransform.transform.position;
             Instance.gameplayCamera.transform.rotation = ThirdPersonPlugin.OriginalTransform.transform.rotation;
+        }
+
+        [HarmonyPostfix]
+        [HarmonyPatch(nameof(PlayerControllerB.SpawnPlayerAnimation))]
+        private static void SpawnPlayerPostpatch(ref bool ___isPlayerControlled)
+        { 
+            if (Instance == null || !___isPlayerControlled)
+            {
+                return;
+            }
+
+            if (!ThirdPersonPlugin.Instance.Enabled)
+            {
+                return;
+            }
+
+            OnEnable();
         }
 
         private static Transform CopyTransform(Transform copyTransform, string gameObjectName)
