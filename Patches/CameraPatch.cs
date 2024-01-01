@@ -15,6 +15,8 @@ namespace LCThirdPerson.Patches
     {
         private static PlayerControllerB Instance;
         private static bool TriggerAwake;
+        private static int OriginalCullingMask;
+        private static UnityEngine.Rendering.ShadowCastingMode OriginalShadowCastingMode;
 
         private static readonly string[] IgnoreGameObjectPrefixes = new[]{
             "VolumeMain"
@@ -38,6 +40,9 @@ namespace LCThirdPerson.Patches
 
             // Increase the grab distance
             Instance.grabDistance = Math.Max(Instance.grabDistance - ThirdPersonPlugin.Instance.Offset.Value.z, 5);
+
+            // Set culling mask to see model's layer
+            Instance.gameplayCamera.cullingMask = OriginalCullingMask | (1 << 23);
         }
 
         public static void OnDisable()
@@ -51,13 +56,16 @@ namespace LCThirdPerson.Patches
             visor.gameObject.SetActive(true);
 
             // Hide the player model
-            playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.ShadowsOnly;
+            playerModel.shadowCastingMode = OriginalShadowCastingMode;
 
             // Show the arms
             Instance.thisPlayerModelArms.enabled = true;
 
             // Reset the grab distance
             Instance.grabDistance = 5f;
+
+            // Hide the models' layer again
+            Instance.gameplayCamera.cullingMask = OriginalCullingMask;
         }
 
         [HarmonyPostfix]
@@ -79,6 +87,8 @@ namespace LCThirdPerson.Patches
             if (TriggerAwake)
             {
                 Instance = __instance;
+                OriginalCullingMask = Instance.gameplayCamera.cullingMask;
+                OriginalShadowCastingMode = Instance.thisPlayerModel.shadowCastingMode;
                 ThirdPersonPlugin.Instance.OnEnable.AddListener(OnEnable);
                 ThirdPersonPlugin.Instance.OnDisable.AddListener(OnDisable);
 
@@ -200,7 +210,7 @@ namespace LCThirdPerson.Patches
         [HarmonyPostfix]
         [HarmonyPatch(nameof(PlayerControllerB.SpawnPlayerAnimation))]
         private static void SpawnPlayerPostpatch(ref bool ___isPlayerControlled)
-        { 
+        {
             if (Instance == null || !___isPlayerControlled)
             {
                 return;
