@@ -39,7 +39,7 @@ namespace LCThirdPerson.Patches
             Instance.thisPlayerModelArms.enabled = false;
 
             // Increase the grab distance
-            Instance.grabDistance = Math.Max(Instance.grabDistance - ThirdPersonPlugin.Instance.Offset.Value.z, 5);
+            Instance.grabDistance = Math.Max(5f - ThirdPersonPlugin.Instance.Offset.Value.z, 5);
 
             // Set culling mask to see model's layer
             Instance.gameplayCamera.cullingMask = OriginalCullingMask | (1 << 23);
