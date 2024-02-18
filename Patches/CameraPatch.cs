@@ -139,6 +139,11 @@ namespace LCThirdPerson.Patches
                 return;
             }
 
+            // Move camera forward/back to avoid head better
+            var forwardOffset = originalTransform.up;
+            forwardOffset.y = 0f;
+            forwardOffset *= 0.2f;
+
             var gameplayCamera = Instance.gameplayCamera;
 
             // Set the placeholder rotation to match the updated gameplayCamera rotation
@@ -164,8 +169,11 @@ namespace LCThirdPerson.Patches
                 offset += originalTransform.transform.forward * ThirdPersonPlugin.Instance.Offset.Value.z;
             }
 
+            // Limit height movement by camera
+            offset.y = Math.Min(offset.y, 2f);
+
             // Set the camera offset
-            gameplayCamera.transform.position = originalTransform.transform.position + offset;
+            gameplayCamera.transform.position = originalTransform.transform.position + forwardOffset + offset;
 
             // Don't fix interact ray if on a ladder
             if (Instance.isClimbingLadder)
