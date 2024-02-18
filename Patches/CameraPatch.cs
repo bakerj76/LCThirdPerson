@@ -161,7 +161,7 @@ namespace LCThirdPerson.Patches
             }
             else
             {
-                offset += originalTransform.transform.forward * -2f;
+                offset += originalTransform.transform.forward * ThirdPersonPlugin.Instance.Offset.Value.z;
             }
 
             // Set the camera offset
