@@ -24,6 +24,8 @@ namespace LCThirdPerson
         public ConfigEntry<bool> ShowCursor { get; set; }
         public ConfigEntry<bool> StartEnabled { get; set; }
         public ConfigEntry<Vector3> Offset { get; set; }
+        public ConfigEntry<float> CameraMaxHeight { get; set; }
+        public ConfigEntry<float> CameraLookDownOffset { get; set; }
 
         private bool tpEnabled;
         public bool Enabled { 
@@ -65,6 +67,8 @@ namespace LCThirdPerson
             ShowCursor = Config.Bind("Options", "ShowCursor", true);
             StartEnabled = Config.Bind("Options", "StartEnabled", true);
             Offset = Config.Bind("Options", "CameraOffset", new Vector3(1f, 0f, -2f));
+            CameraMaxHeight = Config.Bind("Options", "CameraMaxHeight", 1f);
+            CameraLookDownOffset = Config.Bind("Options", "CameraLookDownOffset", 0.2f);
 
             Enabled = StartEnabled.Value;
         }

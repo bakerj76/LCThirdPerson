@@ -146,7 +146,7 @@ namespace LCThirdPerson.Patches
             // Move camera forward/back to avoid head better
             var forwardOffset = originalTransform.up;
             forwardOffset.y = 0f;
-            forwardOffset *= 0.2f;
+            forwardOffset *= ThirdPersonPlugin.Instance.CameraLookDownOffset.Value;
 
             var gameplayCamera = Instance.gameplayCamera;
 
@@ -174,7 +174,7 @@ namespace LCThirdPerson.Patches
             }
 
             // Limit height movement by camera
-            offset.y = Math.Min(offset.y, 2f);
+            offset.y = Math.Min(offset.y, ThirdPersonPlugin.Instance.CameraMaxHeight.Value);
 
             // Set the camera offset
             gameplayCamera.transform.position = originalTransform.transform.position + forwardOffset + offset;
