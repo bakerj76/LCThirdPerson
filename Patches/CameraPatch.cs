@@ -161,7 +161,7 @@ namespace LCThirdPerson.Patches
             var offset = originalTransform.transform.right * ThirdPersonPlugin.Instance.Offset.Value.x +
                 originalTransform.transform.up * ThirdPersonPlugin.Instance.Offset.Value.y;
             var lineStart = originalTransform.transform.position;
-            var lineEnd = originalTransform.transform.position + offset + originalTransform.transform.forward * ThirdPersonPlugin.Instance.Offset.Value.z;
+            var lineEnd = originalTransform.transform.position + forwardOffset + offset + originalTransform.transform.forward * ThirdPersonPlugin.Instance.Offset.Value.z;
 
             // Check for camera collisions
             if (Physics.Linecast(lineStart, lineEnd, out RaycastHit hit, StartOfRound.Instance.collidersAndRoomMask) && !IgnoreCollision(hit.transform.name))
