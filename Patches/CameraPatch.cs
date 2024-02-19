@@ -30,7 +30,9 @@ namespace LCThirdPerson.Patches
             var playerModel = Instance.thisPlayerModel;
 
             // Hide the visor
-            visor.gameObject.SetActive(false);
+            // visor.gameObject.SetActive(false);
+            var visorRenderers = visor.GetComponentInChildren<MeshRenderer>();
+            if (visorRenderers) visorRenderers.enabled = false;
 
             // Show the player model
             playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
@@ -39,7 +41,7 @@ namespace LCThirdPerson.Patches
             Instance.thisPlayerModelArms.enabled = false;
 
             // Increase the grab distance
-            Instance.grabDistance = Math.Max(Instance.grabDistance - ThirdPersonPlugin.Instance.Offset.Value.z, 5);
+            Instance.grabDistance = Math.Max(5f - ThirdPersonPlugin.Instance.Offset.Value.z, 5);
 
             // Set culling mask to see model's layer
             Instance.gameplayCamera.cullingMask = OriginalCullingMask | (1 << 23);
@@ -53,7 +55,9 @@ namespace LCThirdPerson.Patches
             var playerModel = Instance.thisPlayerModel;
 
             // Show the visor
-            visor.gameObject.SetActive(true);
+            // visor.gameObject.SetActive(true);
+            var visorRenderers = visor.GetComponentInChildren<MeshRenderer>();
+            if (visorRenderers) visorRenderers.enabled = true;
 
             // Hide the player model
             playerModel.shadowCastingMode = OriginalShadowCastingMode;
@@ -161,7 +165,7 @@ namespace LCThirdPerson.Patches
             }
             else
             {
-                offset += originalTransform.transform.forward * -2f;
+                offset += originalTransform.transform.forward * ThirdPersonPlugin.Instance.Offset.Value.z;
             }
 
             // Set the camera offset
