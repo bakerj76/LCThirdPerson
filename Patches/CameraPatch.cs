@@ -30,7 +30,9 @@ namespace LCThirdPerson.Patches
             var playerModel = Instance.thisPlayerModel;
 
             // Hide the visor
-            visor.gameObject.SetActive(false);
+            // visor.gameObject.SetActive(false);
+            var visorRenderers = visor.GetComponentInChildren<MeshRenderer>();
+            if (visorRenderers) visorRenderers.enabled = false;
 
             // Show the player model
             playerModel.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
@@ -39,7 +41,7 @@ namespace LCThirdPerson.Patches
             Instance.thisPlayerModelArms.enabled = false;
 
             // Increase the grab distance
-            Instance.grabDistance = Math.Max(Instance.grabDistance - ThirdPersonPlugin.Instance.Offset.Value.z, 5);
+            Instance.grabDistance = Math.Max(5f - ThirdPersonPlugin.Instance.Offset.Value.z, 5);
 
             // Set culling mask to see model's layer
             Instance.gameplayCamera.cullingMask = OriginalCullingMask | (1 << 23);
@@ -53,7 +55,9 @@ namespace LCThirdPerson.Patches
             var playerModel = Instance.thisPlayerModel;
 
             // Show the visor
-            visor.gameObject.SetActive(true);
+            // visor.gameObject.SetActive(true);
+            var visorRenderers = visor.GetComponentInChildren<MeshRenderer>();
+            if (visorRenderers) visorRenderers.enabled = true;
 
             // Hide the player model
             playerModel.shadowCastingMode = OriginalShadowCastingMode;
@@ -139,6 +143,11 @@ namespace LCThirdPerson.Patches
                 return;
             }
 
+            // Move camera forward/back to avoid head better
+            var forwardOffset = originalTransform.up;
+            forwardOffset.y = 0f;
+            forwardOffset *= ThirdPersonPlugin.Instance.CameraLookDownOffset.Value;
+
             var gameplayCamera = Instance.gameplayCamera;
 
             // Set the placeholder rotation to match the updated gameplayCamera rotation
@@ -152,7 +161,7 @@ namespace LCThirdPerson.Patches
             var offset = originalTransform.transform.right * ThirdPersonPlugin.Instance.Offset.Value.x +
                 originalTransform.transform.up * ThirdPersonPlugin.Instance.Offset.Value.y;
             var lineStart = originalTransform.transform.position;
-            var lineEnd = originalTransform.transform.position + offset + originalTransform.transform.forward * ThirdPersonPlugin.Instance.Offset.Value.z;
+            var lineEnd = originalTransform.transform.position + forwardOffset + offset + originalTransform.transform.forward * ThirdPersonPlugin.Instance.Offset.Value.z;
 
             // Check for camera collisions
             if (Physics.Linecast(lineStart, lineEnd, out RaycastHit hit, StartOfRound.Instance.collidersAndRoomMask) && !IgnoreCollision(hit.transform.name))
@@ -161,11 +170,14 @@ namespace LCThirdPerson.Patches
             }
             else
             {
-                offset += originalTransform.transform.forward * -2f;
+                offset += originalTransform.transform.forward * ThirdPersonPlugin.Instance.Offset.Value.z;
             }
 
+            // Limit height movement by camera
+            offset.y = Math.Min(offset.y, ThirdPersonPlugin.Instance.CameraMaxHeight.Value);
+
             // Set the camera offset
-            gameplayCamera.transform.position = originalTransform.transform.position + offset;
+            gameplayCamera.transform.position = originalTransform.transform.position + forwardOffset + offset;
 
             // Don't fix interact ray if on a ladder
             if (Instance.isClimbingLadder)
